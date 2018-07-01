@@ -2,7 +2,7 @@ body {
 	border: 5px solid green;
 }
 
-.alien-square{
+.player-square, .alien-square, .droppable{
 	display: inline-block;
 	height: 60px;
 	width: 23%;
@@ -15,11 +15,6 @@ body {
 	background-color: green;
 }
 
-.player-square{
-	display: inline-block;
-	height: 60px;
-	width: 23%;
-	border: 1px solid black;
 }
 
 .alien-gameboard, .player-gameboard{

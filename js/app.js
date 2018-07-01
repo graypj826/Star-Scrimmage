@@ -68,9 +68,11 @@ const player ={
 	gunPartsInHand : [],
 	gunPartsInPlay : [],
 	gunPartsDestroyed : [],
-	addToShip: function(){
+	addToShip: function(e){
+		if($(e.currentTarget))
 		$(".player-square").click(function(e){
 		console.log("player-square");
+		$(e.currentTarget)
 		}) 
 	},
 	playHull: function(){
@@ -162,6 +164,8 @@ const enemyTargeting = () => {
 // 		}  		
 // 	})
 // }
+
+$( "#date" ).datepicker();
 
 
 //player has hand of 2 guns and 1 hull of two blocks
