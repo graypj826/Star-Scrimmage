@@ -3,10 +3,12 @@
 
 	//create array for player and computer and append to html
 
-
-if (jQuery.ui) {
-  console.log("ui loaded")
-}
+$('#player-hand-div').droppable({
+	accept: '.player-card',
+	drop: function(event, ui){
+		$('#player-hand-div').append(ui.draggable)
+	},
+})
 
 const gameBoard =[ 	[0,0,0,0],
 					[0,0,0,0],
@@ -21,7 +23,14 @@ for (let i = 0; i < gameBoard.length; i++){
 		const square = row[x];
 		const squareDiv = $(`<div class="square player-square player-droppable" id="player-square-${x}-${i} "></div>`)
 		$(`.player-row-${i}`).append(squareDiv)
-		squareDiv.droppable();
+		squareDiv.droppable({
+			accept: '.player-card',
+			drop: function(event, ui){
+				$(squareDiv).append(ui.draggable)
+			},
+
+
+		});
 	}
 }
 
@@ -32,7 +41,13 @@ for (let i = 0; i < gameBoard.length; i++){
 		const square = row[x];
 		const squareDiv = $(`<div class="square alien-droppable alien-square" id="alien-square-${x}-${i} "></div>`)
 		$(`.alien-row-${i}`).append(squareDiv)
-		squareDiv.droppable();
+		squareDiv.droppable({
+			
+			accept: '.player-card',
+			drop: function(event, ui){
+				$(squareDiv).append(ui.draggable)
+			}
+		});
 	}
 	
 }
@@ -95,50 +110,48 @@ const player ={
 	// gunPartsInHand : [],
 	// gunPartsInPlay : [],
 	// gunPartsDestroyed : [],
-	//life :  total life for all player hull parts in play
-	// addToShip: function(){ // need to change this for jquery ui
-	// 	if(playergunPartsInHand.length>0){
-	// 		for(let i = 0; i < playergunPartsInHand.length; i++){
-	// 			$("div").on("click", function(e){
-	// 				if($(e.currentTarget).hasClass("player-square") == true){
-	// 					$(".player-square").on("click",function(e){
-	// 						$(e.currentTarget).addClass("gun-class");		
-	// 						const movePart = playergunPartsInHand.splice(playergunPartsInHand[i]);
-	// 						playergunPartsInPlay.push(movePart);
-	// 						console.log(playergunPartsInHand);
-	// 						console.log(`player has ${playergunPartsInHand.length} left to play`)
-	// 					})
-	// 				}	
-	// 						// } else if ($(e.currentTarget).hasClass("alien-square") == true){
-	// 						// 	console.log("please pick a player square")
-	// 						// 	}
-	// 				if(playerhullPartsInHand.length < 1) {
-	// 					$("this").off("event")			// })	
-	// 				}			
-	// 			})
-	// 		}
-	// 	}
-	// },	
-	// playHull: function(){
-	// 	console.log("playHull function running")
-	// 	for(let i = 0; i < playergunPartsInHand.length; i++){
-	// 		$("div").on("click", function(event){
-	// 			if($(event.currentTarget).hasClass("player-square") == true){
-	// 				console.log("Player player-square")
-	// 				$(event.currentTarget).addClass("hull-class");
-	// 				const moveHull = playerhullPartsInHand.splice(playerhullPartsInHand[i]);
-	// 				playerhullPartsInPlay.push(moveHull);
-	// 				console.log(playerhullPartsInHand);
-	// 			}
-	// 		})
-			
-	// 	if(playerhullPartsInHand.length < 1) {
-	// 		$("this").off("event")
-	// 		game.constructionRound();	
-	// 		}
-		
-	// 	}
-	// },
+	// //life :  total life for all player hull parts in play
+	playHull: function(){
+		console.log("playHull function running")
+		$('.player-hull-class').draggable('enable')
+		// for(let i = 0; i < playergunPartsInHand.length; i++){
+		// 	$("div").on("click", function(event){
+		// 		if($(event.currentTarget).hasClass("player-square") == true){
+		// 			console.log("Player player-square")
+		// 			$(event.currentTarget).addClass("hull-class");
+		// 			const moveHull = playerhullPartsInHand.splice(playerhullPartsInHand[i]);
+		// 			playerhullPartsInPlay.push(moveHull);
+		// 			console.log(playerhullPartsInHand);
+		// 		}
+		// 	})
+	},
+	addToShip: function(){ 
+		$('.player-hull-class').draggable('enable');
+
+		// need to change this for jquery ui
+		// if(playergunPartsInHand.length>0){
+		// 	for(let i = 0; i < playergunPartsInHand.length; i++){
+		// 		$("div").on("click", function(e){
+		// 			if($(e.currentTarget).hasClass("player-square") == true){
+		// 				$(".player-square").on("click",function(e){
+		// 					$(e.currentTarget).addClass("gun-class");		
+		// 					const movePart = playergunPartsInHand.splice(playergunPartsInHand[i]);
+		// 					playergunPartsInPlay.push(movePart);
+		// 					console.log(playergunPartsInHand);
+		// 					console.log(`player has ${playergunPartsInHand.length} left to play`)
+		// 				})
+		// 			}	
+		// 					// } else if ($(e.currentTarget).hasClass("alien-square") == true){
+		// 					// 	console.log("please pick a player square")
+		// 					// 	}
+		// 			if(playerhullPartsInHand.length < 1) {
+		// 				$("this").off("event")			// })	
+		// 			}			
+		// 		})
+		// 	}
+		// }
+	},	
+	
 	attack: function(){
 		for(let i =0; i < playergunPartsInPlay.length; i++){
 			enemyTargeting();
@@ -161,6 +174,8 @@ const alien = {
 	partsDestroyed : [],
 	//alienlife 
 	layShip: function(){
+		console.log("lay ship")
+		console.log(alien.hullPartsInHand)
 		$('#alien-square-1-3').addClass("hull-class");
 		const moveHull = this.hullPartsInHand.splice(0);
 		this.hullPartsInPlay.push(moveHull);
@@ -175,83 +190,113 @@ const game = {
 	
 	buildDeck : function(){
 		gameDeck.push(playerHull);
-		
 		gameDeck.push(playerGun);
-	
 		gameDeck.push(alienHull);
-	
 		gameDeck.push(alienGun);
 
 	},
 	dealPlayer : function(){ //for testing and initial cretion, hard coded the made guns and hulls into the hand, need to create a function later that creates random cards and then puts them into a deck.
 		//we'll need to create a deck and have that deck sorted into the game deck and added, but for now, hard coded.
 	
+
+	//deal out the hull card
 		let moveCard = gameDeck.splice(0,1);
 		playerhullPartsInHand.push(moveCard[0]);
 		for (let i =0; i < playerhullPartsInHand.length; i++){
-			const hullDiv = $(`<div id="player-hull-${i}" class="player-card"> card 1 </div>`)
+			const hullDiv = $(`<div id="player-hull-${i}" class="player-card hull-class player-hull-class"> Hull Card </div>`)
 			hullDiv.appendTo ("#player-hand-div");
 			hullDiv.draggable({
-				containment: '#player-side',
-				// revert: true
+				containment: '.player-side',
+				helper:'clone',
 			})
-			$('#player-hand-div').append(hullDiv)
 		}
-
-
 		
+
+	//deal out gun parts --> with more advanced features this will deal ALL ship parts
 		moveCard = gameDeck.splice(0,1);
 		playergunPartsInHand.push(moveCard[0]);
 		for (let i =0; i < playergunPartsInHand.length; i++){
-			const hullDiv = $(`<div id="player-gun-${i}" class="player-card"> card 1 </div>`)
-			hullDiv.appendTo ("#player-hand-div");
-			hullDiv.draggable({
-				containment: '#player-side',
-				// revert: true
+			const gunDiv = $(`<div id="player-gun-${i}" class="player-card gun-class player-gun-class"> Gun card </div>`)
+			gunDiv.appendTo ("#player-hand-div");
+			gunDiv.draggable({
+				containment: '.player-side',
+				helper: 'clone',
+				// class: {
+				// 	"ui-draggable": "test"
+				// }
 			})
-			$('#player-hand-div').append(`<div id="player-gun-${i}" class="player-card draggable"> Card 2</div>`)
 	
 		}
 		
 	},
 	dealAlien: function(){
-		alien.hullPartsInHand.push(alienHull);
-		alien.gunPartsInHand.push(alienGun);
+	//revise to make it player 2 once the full game play for player 1 is working
+		let moveCard = gameDeck.splice(0,1);
+		alien.hullPartsInHand.push(moveCard[0]);
+
+	//revise to make it player 2 once the full game play for player 1 is working
+
+		moveCard = gameDeck.splice(0,1);
+		alien.gunPartsInHand.push(moveCard[0]);
+
+		
+		
 	},
+
+	//umbrella function to build the deck and deal cards
 	dealParts : function(){
 		this.buildDeck();
 		this.dealPlayer();
 		this.dealAlien();
 
 	},
-	constructionRound : function(){
-		if (playerhullPartsInHand.length>0){
-			console.log("cards to play!")
-			$('#action-button').text("Construct Hull").attr("id","constructHull")
-			$('#construction').click(function(){
-				player.playHull();
-			})
-			
 
-		} else if(playergunPartsInHand>0) {
-			console.log("cards to play!")
-			$('#action-button').text("Add To Your Ship").attr("id","constructParts")
-			$('#constructParts').click(function(){
-				player.addToShip();
-				})
-		}
-	}, 
-	attackMode : function(){
-		playergunPartsInPlay.push(playergunPartsInHand[0]);
+	//time for players to add on to play the hull card
+	constructHullRound : function(){
+		console.log("constructPartsRounds");
+		console.log("cards to play!")
+		$('#action-button').text("Construct Hull").attr("id","constructHull")
+		$('#constructHull').click(function(){
+			player.playHull();
+			$('#construction').hide();
+		})
+		$('#next-button').click(function(){
+			$('.player-hull-class').draggable('disable')
+			this.constructPartsRound();
+		})
+	},	
+
+	//time for players to play any parts they may have
+	constructPartsRound : function(){
+		console.log("constructPartsRounds");
+		$("action-button").show();
+		console.log("cards to play!")
+		$('#action-button').text("Add To Your Ship").attr("id","constructParts")
+		$('#constructParts').click(function(){
+			player.addToShip();
+			$('#constructParts').hide();
+		})
+		$('#next-button').click(function(){
+			$('.player-gun-class').draggable('disable')
+			this.attackRound();
+		})	
+	},
+	//move into attack the players opponent
+	attackRound : function(){
 		console.log("attack Mode");
 		if (playergunPartsInPlay.length > 0){
-			console.log("attack!")
 			$('#action-button').text("Attack").attr("id","attack")
 			$('#attack').click(function(){
 				player.attack();
+
 			})
 		}
+		$('#next-button').click(function(){
+			console.log("end of round")
+		})
 	},
+
+	//reset players options once their round starts over
 	resetFunctions : function(){
 		for(let i = 0; i <playerShotThisRound.length; i++){
 			const firedGuns = playerShotThisRound.splice(playerShotThisRound[0]);
@@ -259,10 +304,17 @@ const game = {
 				console.log(playerShotThisRound);
 		}
 	},
-	playRound : function(){
+//umbrella function to play a round
+	playRounds : function(){
 		this.resetFunctions();
-		// this.constructionRound();
-		this.attackMode();
+		if(playerhullPartsInHand.length > 0){
+			this.constructHullRound();
+		} else if (playergunPartsInHand.length > 0){
+			this.constructPartsRound();
+		} else {
+			this.attackRound();
+		}
+		
 	}
 }
 
@@ -271,6 +323,9 @@ const game = {
 
 //need to figure out a way to select the card and only then do damage - addClass selected card, makes red border, activates enemy targeting, then turns off. We could sort it into a new array, cards to be played in round, and splice it out next change they get...could use next button to cycle through array and then whenever they attack or hit next, it moves to the next card until there are no more cards left in the to be played array. 
 
+//misc functions necessary to play
+
+//function to find enemy targets and attack
 const enemyTargeting = () => {
 	$(".alien-square").on("click",function(e){
 		console.log("alien-square");
@@ -296,18 +351,15 @@ const enemyTargeting = () => {
 
 //round function that 
 
-//start game method that regulates rounds
+//umbrella function that controls the game that regulates rounds
 const startGame = () => { 
+	
 	game.dealParts();
+	$(".player-card").draggable({disabled: true });
 	alien.layShip();
-	// game.playRound();
+	game.playRounds();
 }
 
-$("#content").draggable({
-    containment: "parent"
-});
-
-$(" ")
 
 startGame();
 
