@@ -27,10 +27,18 @@ for (let i = 0; i < gameBoard.length; i++){
 			accept: '.player-card',
 			drop: function(event, ui){
 				$(squareDiv).append(ui.draggable)
+				if(ui.draggable.hasClass("hull-class")){
+					const moveHull = playerhullPartsInHand.splice(playerhullPartsInHand[i]);
+					playerhullPartsInPlay.push(moveHull);
+		 			console.log(playerhullPartsInHand);
+				}
+				if(ui.draggable.hasClass("gun-class")){
+					const moveGun = playergunPartsInHand.splice(playergunPartsInHand[i]);
+					playergunPartsInPlay.push(moveGun);
+		 			console.log(playergunPartsInHand);
+				}
 			},
-
-
-		});
+		})
 	}
 }
 
@@ -112,44 +120,10 @@ const player ={
 	// gunPartsDestroyed : [],
 	// //life :  total life for all player hull parts in play
 	playHull: function(){
-		console.log("playHull function running")
-		$('.player-hull-class').draggable('enable')
-		// for(let i = 0; i < playergunPartsInHand.length; i++){
-		// 	$("div").on("click", function(event){
-		// 		if($(event.currentTarget).hasClass("player-square") == true){
-		// 			console.log("Player player-square")
-		// 			$(event.currentTarget).addClass("hull-class");
-		// 			const moveHull = playerhullPartsInHand.splice(playerhullPartsInHand[i]);
-		// 			playerhullPartsInPlay.push(moveHull);
-		// 			console.log(playerhullPartsInHand);
-		// 		}
-		// 	})
+		$(".player-hull-class").draggable({disabled: false });
 	},
 	addToShip: function(){ 
-		$('.player-hull-class').draggable('enable');
-
-		// need to change this for jquery ui
-		// if(playergunPartsInHand.length>0){
-		// 	for(let i = 0; i < playergunPartsInHand.length; i++){
-		// 		$("div").on("click", function(e){
-		// 			if($(e.currentTarget).hasClass("player-square") == true){
-		// 				$(".player-square").on("click",function(e){
-		// 					$(e.currentTarget).addClass("gun-class");		
-		// 					const movePart = playergunPartsInHand.splice(playergunPartsInHand[i]);
-		// 					playergunPartsInPlay.push(movePart);
-		// 					console.log(playergunPartsInHand);
-		// 					console.log(`player has ${playergunPartsInHand.length} left to play`)
-		// 				})
-		// 			}	
-		// 					// } else if ($(e.currentTarget).hasClass("alien-square") == true){
-		// 					// 	console.log("please pick a player square")
-		// 					// 	}
-		// 			if(playerhullPartsInHand.length < 1) {
-		// 				$("this").off("event")			// })	
-		// 			}			
-		// 		})
-		// 	}
-		// }
+		$(".player-gun-class").draggable({disabled: false });
 	},	
 	
 	attack: function(){
@@ -253,33 +227,31 @@ const game = {
 
 	//time for players to add on to play the hull card
 	constructHullRound : function(){
-		console.log("constructPartsRounds");
-		console.log("cards to play!")
-		$('#action-button').text("Construct Hull").attr("id","constructHull")
-		$('#constructHull').click(function(){
-			player.playHull();
-			$('#construction').hide();
-		})
-		$('#next-button').click(function(){
-			$('.player-hull-class').draggable('disable')
-			this.constructPartsRound();
-		})
+		console.log("constructHullRounds");
+		if (playergunPartsInHand.length > 0){
+			$('#next-button').text("Next: Add to Your Ship"),
+			$('#next-button').click(function(){
+				game.constructPartsRound();
+			})
+		} else {
+			$('#next-button').text("Attack!")
+			$('#next-button').click(function(){
+				game.attackRound();
+			})
+		}
+		player.playHull();	
 	},	
 
 	//time for players to play any parts they may have
-	constructPartsRound : function(){
+	constructPartsRound : function(){		
 		console.log("constructPartsRounds");
-		$("action-button").show();
-		console.log("cards to play!")
-		$('#action-button').text("Add To Your Ship").attr("id","constructParts")
-		$('#constructParts').click(function(){
-			player.addToShip();
-			$('#constructParts').hide();
-		})
+		$(".player-hull-class").draggable({disabled: true });
+		$('#next-button').text("Attack!")
 		$('#next-button').click(function(){
-			$('.player-gun-class').draggable('disable')
-			this.attackRound();
-		})	
+			$('#construction').hide();
+			game.attackRound();
+		})
+		player.addToShip();	
 	},
 	//move into attack the players opponent
 	attackRound : function(){
@@ -288,12 +260,13 @@ const game = {
 			$('#action-button').text("Attack").attr("id","attack")
 			$('#attack').click(function(){
 				player.attack();
-
+			})
+		} else {
+			$('#next-button').text("End Round")
+			$('#next-button').click(function(){
+			console.log("end of round")
 			})
 		}
-		$('#next-button').click(function(){
-			console.log("end of round")
-		})
 	},
 
 	//reset players options once their round starts over
