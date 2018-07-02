@@ -3,11 +3,6 @@
 
 	//create array for player and computer and append to html
 
-
-
-
-
-
 const gameBoard =[ 	[0,0,0,0],
 					[0,0,0,0],
 					[0,0,0,0],
@@ -20,8 +15,8 @@ for (let i = 0; i < gameBoard.length; i++){
 	$('#player-gameboard').append(`<div class="player-row-${i} player-row game-row"></div>`)
 	for(let x = 0; x < row.length; x++){
 		const square = row[x];
-		$(`.alien-row-${i}`).append(`<div class="square alien-square-${x}-${i} alien-square"></div>`)
-		$(`.player-row-${i}`).append(`<div class="square player-square-${x}-${i} player-square"></div>`)
+		$(`.alien-row-${i}`).append(`<div class="square alien-square" id="alien-square-${x}-${i}"></div>`)
+		$(`.player-row-${i}`).append(`<div class="square player-square" id="player-square-${x}-${i}"></div>`)
 	}
 }
 
@@ -59,38 +54,84 @@ const playerGun = new Gun(1, 3)
 //players can target other cards to do damage
 //alienGun.attackhull(playerHull) check check
 
-//hard code the hull on to the array
+//create player object to hold on to player actions, needs cards in hand, construction functions and attack functions
+
+//issue with scope in wtih these
+
+playerhullPartsInHand = [];
+playerhullPartsInPlay = [];
+playerhullPartsDestroyed = [];
+playergunPartsInHand = [];
+playergunPartsInPlay = [];
+playergunPartsDestroyed = [];
+playerShotThisRound = [];
+
 
 const player ={
-	hullPartsInHand : [],
-	hullPartsInPlay : [],
-	hullPartsDestroyed : [],
-	gunPartsInHand : [],
-	gunPartsInPlay : [],
-	gunPartsDestroyed : [],
-	addToShip: function(e){
-		if($(e.currentTarget))
-		$(".player-square").click(function(e){
-		console.log("player-square");
-		$(e.currentTarget)
-		}) 
-	},
-	playHull: function(){
-		$(".player-square").click(function(e){
-		$(e.currentTarget).addClass("hull-class");
-		const moveHull = hullPartsInHand.splice([0],1);
-		hullPartsInPlay.push(moveHull); 
-		})
+	// hullPartsInHand : [],
+	// hullPartsInPlay : [],
+	// hullPartsDestroyed : [],
+	// gunPartsInHand : [],
+	// gunPartsInPlay : [],
+	// gunPartsDestroyed : [],
+	//life :  total life for all player hull parts in play
+	// addToShip: function(){ // need to change this for jquery ui
+	// 	if(playergunPartsInHand.length>0){
+	// 		for(let i = 0; i < playergunPartsInHand.length; i++){
+	// 			$("div").on("click", function(e){
+	// 				if($(e.currentTarget).hasClass("player-square") == true){
+	// 					$(".player-square").on("click",function(e){
+	// 						$(e.currentTarget).addClass("gun-class");		
+	// 						const movePart = playergunPartsInHand.splice(playergunPartsInHand[i]);
+	// 						playergunPartsInPlay.push(movePart);
+	// 						console.log(playergunPartsInHand);
+	// 						console.log(`player has ${playergunPartsInHand.length} left to play`)
+	// 					})
+	// 				}	
+	// 						// } else if ($(e.currentTarget).hasClass("alien-square") == true){
+	// 						// 	console.log("please pick a player square")
+	// 						// 	}
+	// 				if(playerhullPartsInHand.length < 1) {
+	// 					$("this").off("event")			// })	
+	// 				}			
+	// 			})
+	// 		}
+	// 	}
+	// },	
+	// playHull: function(){
+	// 	console.log("playHull function running")
+	// 	for(let i = 0; i < playergunPartsInHand.length; i++){
+	// 		$("div").on("click", function(event){
+	// 			if($(event.currentTarget).hasClass("player-square") == true){
+	// 				console.log("Player player-square")
+	// 				$(event.currentTarget).addClass("hull-class");
+	// 				const moveHull = playerhullPartsInHand.splice(playerhullPartsInHand[i]);
+	// 				playerhullPartsInPlay.push(moveHull);
+	// 				console.log(playerhullPartsInHand);
+	// 			}
+	// 		})
+			
+	// 	if(playerhullPartsInHand.length < 1) {
+	// 		$("this").off("event")
+	// 		game.constructionRound();	
+	// 		}
+		
+	// 	}
+	// },
+	attack: function(){
+		for(let i =0; i < playergunPartsInPlay.length; i++){
+			enemyTargeting();
+			const firedGuns = playergunPartsInPlay.splice(playergunPartsInPlay[0]);
+			playerShotThisRound.push(firedGuns);
+			console.log(playerShotThisRound);
+		}
+		
 	}
 }
 
-// }
-	//playerLife : total life for all player hull parts in play
-	//}
+//create alien object to keep track aliens stuff, cards in hand, cards in play, life, construction and play -- reach goal, setup/ai/random for computer
 
-	// }
-
-const alien ={
+const alien = {
 	hullPartsInHand : [],
 	hullPartsInPlay : [],
 	hullPartsDestroyed : [],
@@ -98,52 +139,73 @@ const alien ={
 	gunPartsInPlay : [], 
 	partsDestroyed : [],
 	//alienlife 
+	layShip: function(){
+		$('#alien-square-1-3').addClass("hull-class");
+		const moveHull = this.hullPartsInHand.splice(0);
+		this.hullPartsInPlay.push(moveHull);
+		$('#alien-square-2-3').addClass("gun-class");
+		console.log(alien.hullPartsInPlay);
+	}
 }
 
+//create game object to keep track of game needs 1) deal parts at the start of the game 2) deal parts each round, 3) different phases of game play [draw, construction, attack] 4) switching play to alien and back to player 
 
 const game = {
-	dealParts : function(){
-		player.hullPartsInHand.push(playerHull);
-		player.gunPartsInHand.push(playerGun);
+	dealParts : function(){ //for testing and initial cretion, hard coded the made guns and hulls into the hand, need to create a function later that creates random cards and then puts them into a deck. 
+		playerhullPartsInHand.push(playerHull);
+		playergunPartsInHand.push(playerGun);
 		alien.hullPartsInHand.push(alienHull);
 		alien.gunPartsInHand.push(alienGun);
 	},
-	firstHull : function(){
-		player.playHull();		
-	},
 	constructionRound : function(){
-		if ((player.hullPartsInHand.length>0) || (player.gunPartsInHand>0)){
+		if (playerhullPartsInHand.length>0){
 			console.log("cards to play!")
-			$('#action-button').text("Constuction").attr("id","construction")
+			$('#action-button').text("Construct Hull").attr("id","constructHull")
 			$('#construction').click(function(){
-				player.addToShip()
+				player.playHull();
 			})
+			
 
-		} else {
-			console.log("move to battle")
+		} else if(playergunPartsInHand>0) {
+			console.log("cards to play!")
+			$('#action-button').text("Add To Your Ship").attr("id","constructParts")
+			$('#constructParts').click(function(){
+				player.addToShip();
+				})
 		}
 	}, 
+	attackMode : function(){
+		playergunPartsInPlay.push(playergunPartsInHand[0]);
+		console.log("attack Mode");
+		if (playergunPartsInPlay.length > 0){
+			console.log("attack!")
+			$('#action-button').text("Attack").attr("id","attack")
+			$('#attack').click(function(){
+				player.attack();
+			})
+		}
+	},
+	resetFunctions : function(){
+		for(let i = 0; i <playerShotThisRound.length; i++){
+			const firedGuns = playerShotThisRound.splice(playerShotThisRound[0]);
+				playergunPartsInPlay.push(firedGuns);
+				console.log(playerShotThisRound);
+		}
+	},
+	playRound : function(){
+		this.resetFunctions();
+		// this.constructionRound();
+		this.attackMode();
+	}
 }
-
-const startGame = () => {
-	game.dealParts();
-	game.constructionRound();
-}
-
-startGame();
-
-
-$(".alien-square-1-2").addClass("hull-class");
-$(".alien-square-2-2").addClass("gun-class");
-
-//$(".player-square-2-0").addClass("hull-class");
-$(".player-square-1-0").addClass("gun-class");
-
 
 //player can do damage to the computer with the power of jQuery
 //.hasclass checks to se if it has a class
+
+//need to figure out a way to select the card and only then do damage - addClass selected card, makes red border, activates enemy targeting, then turns off. We could sort it into a new array, cards to be played in round, and splice it out next change they get...could use next button to cycle through array and then whenever they attack or hit next, it moves to the next card until there are no more cards left in the to be played array. 
+
 const enemyTargeting = () => {
-	$(".alien-square").click(function(e){
+	$(".alien-square").on("click",function(e){
 		console.log("alien-square");
 		if($(e.currentTarget).hasClass("hull-class")){
 			console.log("classy")
@@ -165,10 +227,16 @@ const enemyTargeting = () => {
 // 	})
 // }
 
-$( "#date" ).datepicker();
+//round function that 
 
 
-//player has hand of 2 guns and 1 hull of two blocks
+//start game method that regulates rounds
+const startGame = () => {
+	game.dealParts();
+	alien.layShip();
+	game.playRound();
+}
 
-//alien has hand of 2 guns and 1 hull of two blocks
+startGame();
+
 
