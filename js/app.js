@@ -3,6 +3,11 @@
 
 	//create array for player and computer and append to html
 
+
+if (jQuery.ui) {
+  console.log("ui loaded")
+}
+
 const gameBoard =[ 	[0,0,0,0],
 					[0,0,0,0],
 					[0,0,0,0],
@@ -11,13 +16,25 @@ const gameBoard =[ 	[0,0,0,0],
 
 for (let i = 0; i < gameBoard.length; i++){
 	let row = gameBoard[i];
-	$('#alien-gameboard').append(`<div class="alien-row-${i} alien-row game-row"></div>`)
 	$('#player-gameboard').append(`<div class="player-row-${i} player-row game-row"></div>`)
 	for(let x = 0; x < row.length; x++){
 		const square = row[x];
-		$(`.alien-row-${i}`).append(`<div class="square alien-square" id="alien-square-${x}-${i}"></div>`)
-		$(`.player-row-${i}`).append(`<div class="square player-square" id="player-square-${x}-${i}"></div>`)
+		const squareDiv = $(`<div class="square player-square player-droppable" id="player-square-${x}-${i} "></div>`)
+		$(`.player-row-${i}`).append(squareDiv)
+		squareDiv.droppable();
 	}
+}
+
+for (let i = 0; i < gameBoard.length; i++){
+	let row = gameBoard[i];
+	$('#alien-gameboard').append(`<div class="alien-row-${i} alien-row game-row"></div>`)
+	for(let x = 0; x < row.length; x++){
+		const square = row[x];
+		const squareDiv = $(`<div class="square alien-droppable alien-square" id="alien-square-${x}-${i} "></div>`)
+		$(`.alien-row-${i}`).append(squareDiv)
+		squareDiv.droppable();
+	}
+	
 }
 
 //creat classes for hull and gun to be able to generate objects from for player and alien
@@ -26,6 +43,7 @@ class Hull {
 	constructor(integrity){
 		this.integrity=integrity;
 	}
+
 }
 
 class Gun {
@@ -51,6 +69,8 @@ const alienGun = new Gun(1, 3)
 const playerHull = new Hull(10)
 const playerGun = new Gun(1, 3)
 
+
+
 //players can target other cards to do damage
 //alienGun.attackhull(playerHull) check check
 
@@ -66,6 +86,7 @@ playergunPartsInPlay = [];
 playergunPartsDestroyed = [];
 playerShotThisRound = [];
 
+gameDeck=[];
 
 const player ={
 	// hullPartsInHand : [],
@@ -144,18 +165,64 @@ const alien = {
 		const moveHull = this.hullPartsInHand.splice(0);
 		this.hullPartsInPlay.push(moveHull);
 		$('#alien-square-2-3').addClass("gun-class");
-		console.log(alien.hullPartsInPlay);
 	}
 }
 
-//create game object to keep track of game needs 1) deal parts at the start of the game 2) deal parts each round, 3) different phases of game play [draw, construction, attack] 4) switching play to alien and back to player 
+//create game object to keep track of game needs 1) deal parts at the start of the game 2) deal parts each round, 3) different phases of game play [draw, construction, attack] 4) switching play to alien and back to player gameDeck : [playerHull, playerGun, alienHull, alienGun],
+
 
 const game = {
-	dealParts : function(){ //for testing and initial cretion, hard coded the made guns and hulls into the hand, need to create a function later that creates random cards and then puts them into a deck. 
-		playerhullPartsInHand.push(playerHull);
-		playergunPartsInHand.push(playerGun);
+	
+	buildDeck : function(){
+		gameDeck.push(playerHull);
+		
+		gameDeck.push(playerGun);
+	
+		gameDeck.push(alienHull);
+	
+		gameDeck.push(alienGun);
+
+	},
+	dealPlayer : function(){ //for testing and initial cretion, hard coded the made guns and hulls into the hand, need to create a function later that creates random cards and then puts them into a deck.
+		//we'll need to create a deck and have that deck sorted into the game deck and added, but for now, hard coded.
+	
+		let moveCard = gameDeck.splice(0,1);
+		playerhullPartsInHand.push(moveCard[0]);
+		for (let i =0; i < playerhullPartsInHand.length; i++){
+			const hullDiv = $(`<div id="player-hull-${i}" class="player-card"> card 1 </div>`)
+			hullDiv.appendTo ("#player-hand-div");
+			hullDiv.draggable({
+				containment: '#player-side',
+				// revert: true
+			})
+			$('#player-hand-div').append(hullDiv)
+		}
+
+
+		
+		moveCard = gameDeck.splice(0,1);
+		playergunPartsInHand.push(moveCard[0]);
+		for (let i =0; i < playergunPartsInHand.length; i++){
+			const hullDiv = $(`<div id="player-gun-${i}" class="player-card"> card 1 </div>`)
+			hullDiv.appendTo ("#player-hand-div");
+			hullDiv.draggable({
+				containment: '#player-side',
+				// revert: true
+			})
+			$('#player-hand-div').append(`<div id="player-gun-${i}" class="player-card draggable"> Card 2</div>`)
+	
+		}
+		
+	},
+	dealAlien: function(){
 		alien.hullPartsInHand.push(alienHull);
 		alien.gunPartsInHand.push(alienGun);
+	},
+	dealParts : function(){
+		this.buildDeck();
+		this.dealPlayer();
+		this.dealAlien();
+
 	},
 	constructionRound : function(){
 		if (playerhullPartsInHand.length>0){
@@ -229,14 +296,26 @@ const enemyTargeting = () => {
 
 //round function that 
 
-
 //start game method that regulates rounds
-const startGame = () => {
+const startGame = () => { 
 	game.dealParts();
 	alien.layShip();
-	game.playRound();
+	// game.playRound();
 }
+
+$("#content").draggable({
+    containment: "parent"
+});
+
+$(" ")
 
 startGame();
 
+//demonstration of drag and drop
 
+// // //$('#divCountries').droppable({
+// // 	accept: 'li[data-value="country"]', // the html is <li data-value="country"> USA </li>	
+// 	drop: function (event,ui){
+// // 		$('#countries').append(ui.draggable))
+// // 	}
+// // });

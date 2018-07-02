@@ -9,15 +9,29 @@
 
 </head>
 <body>
-	<div id="alien-gameboard" class = "gameboard">
+	<div id="parent">
+		    <div id="content">test
+			</div>
+		<div class="alien-side">
+			<div id="alien-gameboard" class = "gameboard">
+			</div>
+		</div>
+		<div class = "barrier">
+		</div>
+		<div class="player-side">
+			<div id="player-gameboard" class = "gameboard">
+		</div>
+		<div id = "player-hud">
+			<div class=row>
+				<div id="player-profile-pic">
+				</div>
+				<div id = "player-hand-div">
+				</div>
+			</div>
+			<button type="button" id="action-button"> Click </button>
+			<button type="button" id="next-button"> Next </button>
+		</div>
 	</div>
-	<div class = "barrier">
-	</div>
-	<div class="playerSide">
-		<div id="player-gameboard" class = "gameboard">
-	</div>
-	<button type="button" id="action-button"> Click </button>
-	<button type="button" id="next-button"> Next </button>
 <script type="text/javascript" src="js/app.js"></script> 
 </body>
 </html>
