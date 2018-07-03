@@ -21,7 +21,7 @@ for (let i = 0; i < gameBoard.length; i++){
 	$('#player-gameboard').append(`<div class="player-row-${i} player-row game-row"></div>`)
 	for(let x = 0; x < row.length; x++){
 		const square = row[x];
-		const squareDiv = $(`<div class="square player-square player-droppable" id="player-square-${x}-${i} "></div>`)
+		const squareDiv = $(`<div class="square player-square player-droppable" id="player-square-${x}-${i}"></div>`)
 		$(`.player-row-${i}`).append(squareDiv)
 		squareDiv.droppable({
 			accept: '.player-card',
@@ -47,7 +47,7 @@ for (let i = 0; i < gameBoard.length; i++){
 	$('#alien-gameboard').append(`<div class="alien-row-${i} alien-row game-row"></div>`)
 	for(let x = 0; x < row.length; x++){
 		const square = row[x];
-		const squareDiv = $(`<div class="square alien-droppable alien-square" id="alien-square-${x}-${i} "></div>`)
+		const squareDiv = $(`<div class="square alien-droppable alien-square" id="alien-square-${x}-${i}"></div>`)
 		$(`.alien-row-${i}`).append(squareDiv)
 		squareDiv.droppable({
 			
@@ -82,12 +82,17 @@ class Gun {
 		target.integrity = target.integrity-this.damage
 		console.log(target)
 	}
+	checkPartDestroyed(target, div){
+		if(target.integrity <= 0){
+			$(div).removeClass("gun-class");
+		}
+	}
 }
 
 //generate 2 guns and one hull for both
 
 const alienHull = new Hull(10)
-const alienGun = new Gun(1, 3)
+const alienGun = new Gun(1, 1)
 
 const playerHull = new Hull(10)
 const playerGun = new Gun(1, 3)
@@ -127,6 +132,7 @@ const player ={
 	},	
 	
 	attack: function(){
+		console.log(playergunPartsInPlay)
 		for(let i =0; i < playergunPartsInPlay.length; i++){
 			enemyTargeting();
 			const firedGuns = playergunPartsInPlay.splice(playergunPartsInPlay[0]);
@@ -146,14 +152,14 @@ const alien = {
 	gunPartsInHand : [],
 	gunPartsInPlay : [], 
 	partsDestroyed : [],
-	//alienlife 
+	alienlife : alienHull.integrity, 
 	layShip: function(){
 		console.log("lay ship")
 		console.log(alien.hullPartsInHand)
-		$('#alien-square-1-3').addClass("hull-class");
+		$("#alien-square-1-3").addClass("alien-hull-class hull-class");
 		const moveHull = this.hullPartsInHand.splice(0);
 		this.hullPartsInPlay.push(moveHull);
-		$('#alien-square-2-3').addClass("gun-class");
+		$("#alien-square-0-3").addClass("alien-gun-class gun-class");
 	}
 }
 
@@ -256,11 +262,11 @@ const game = {
 	//move into attack the players opponent
 	attackRound : function(){
 		console.log("attack Mode");
+		console.log(playergunPartsInPlay);
+		$(".player-gun-class").draggable({disabled: true });
 		if (playergunPartsInPlay.length > 0){
-			$('#action-button').text("Attack").attr("id","attack")
-			$('#attack').click(function(){
-				player.attack();
-			})
+			console.log("player is attacking")
+			player.attack();
 		} else {
 			$('#next-button').text("End Round")
 			$('#next-button').click(function(){
@@ -291,26 +297,26 @@ const game = {
 	}
 }
 
-//player can do damage to the computer with the power of jQuery
-//.hasclass checks to se if it has a class
-
-//need to figure out a way to select the card and only then do damage - addClass selected card, makes red border, activates enemy targeting, then turns off. We could sort it into a new array, cards to be played in round, and splice it out next change they get...could use next button to cycle through array and then whenever they attack or hit next, it moves to the next card until there are no more cards left in the to be played array. 
-
-//misc functions necessary to play
-
-//function to find enemy targets and attack
-const enemyTargeting = () => {
-	$(".alien-square").on("click",function(e){
+const enemyTargeting = function(){
+	$(".alien-square").one("click",function(e){
 		console.log("alien-square");
 		if($(e.currentTarget).hasClass("hull-class")){
 			console.log("classy")
 			playerGun.attackhull(alienHull)
+			checkIntegrity();
 		} else if($(e.currentTarget).hasClass("gun-class")){
 			console.log('shooter')
 			playerGun.attackgun(alienGun)
-		} 		
+			playerGun.checkPartDestroyed(alienGun,e.currentTarget);
+		}		
 	})	
 }
+
+const checkIntegrity = function(){
+	if (alien.life <= 0 ){
+		console.log("Player 1 has won!")
+	}
+};
 
 // const playerTargeting = () => {
 // 	$(".player-square").click(function(e){
