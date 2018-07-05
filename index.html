@@ -1,32 +1,61 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Star Scrimmage</title>
+	<title>Star Skirmish</title>
+
+<!-- CSS and bootstrap -->
 	<link rel="stylesheet" type="text/css" href="css/style.css">
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+
+<!-- Fonts -->
+
+	<link href="https://fonts.googleapis.com/css?family=Audiowide|Bungee+Inline|Bungee+Shade|Ceviche+One|Codystar|Federant|Gugi|Megrim|Monoton|Rock+Salt|Russo+One|Stalinist+One|Syncopate|Trade+Winds|Vast+Shadow|Wallpoet" rel="stylesheet">
+
+<!-- Jquery and Jquery UI -->
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.js"></script>
 
 </head>
 <body>
-	<div class="alien-side">
-		<div id="alien-gameboard" class = "gameboard">
-		</div>
-	</div>
-	<div class = "barrier">
-	</div>
-	<div class="human-side">
-		<div id="human-gameboard" class = "gameboard">
-		</div>
-	<div id = "human-hud">
-		<div class=row>
-			<div id="human-profile-pic">
+	<div class = "container-fluid" id="container">
+		<div id="title"><h1 id="star"> STAR </h1> <h1 id="skirmish"> skirmish </h1>
+		</div>	
+		<div class="alien-side" class="row">	
+			<div id = "alien-hud" class="row">
+				<div id = "alien-hand-div" class="col-xs">
+				</div>
+				<div id="alien-profile-pic" clas="col-xs">
+				</div>
 			</div>
-			<div id = "human-hand-div">
+			<div id ="alien-vitals" class="row">
+				<div class= "vitals" > <p id="alien-health"> health: <p> </div>
+				<div><h2> Player 2 </h2></div>
+				<div class = "vitals" > <p id="alien-holding-cards"> cards in hand: </p></div>
 			</div>
+			<div class="instructions-div" id="alien-instructions"> <p> instructions go here </p></div>
+			<div id="alien-gameboard" class = "gameboard">
+			</div>
+			
 		</div>
-		<div class="row">
-			<button type="button" id="next-button"> Next Phase </button>
+		<div class = "barrier">			
+			<div id="phase"> <p> instructions go here </p></div>
+			<button type="button" id="next-button" class="btn btn-outline-warning"> Next Phase </button>
+		</div>
+		<div class="human-side" class="row">
+			<div id="human-gameboard" class = "gameboard">
+			</div>
+			<div class="instructions-div" id="human-instructions"> <p> instructions go here </p></div>
+			<div id ="human-vitals" class="row">
+					<div class= "vitals" > <p id="human-health"> health: </p> </div>
+					<div><h2> Player 1 </h2></div>
+					<div class = "vitals" > <p id="human-holding-cards"> cards in hand: </p></div>
+				</div>
+			<div id = "human-hud" class="row">
+				<div id="human-profile-pic" class="col-xs">
+				</div>
+				<div id = "human-hand-div" clas="col-xs">
+				</div>
+			</div>
 		</div>
 	</div>
 <script type="text/javascript" src="js/app.js"></script> 

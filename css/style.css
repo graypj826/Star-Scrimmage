@@ -1,35 +1,79 @@
+/*Fonts:
+
+font-family: 'Rock Salt', cursive;
+font-family: 'Russo One', sans-serif;
+font-family: 'Audiowide', cursive;
+font-family: 'Bungee Inline', cursive;
+font-family: 'Bungee Shade', cursive;
+font-family: 'Ceviche One', cursive;
+font-family: 'Codystar', cursive;
+font-family: 'Federant', cursive;
+font-family: 'Gugi', cursive;
+font-family: 'Megrim', cursive;
+font-family: 'Monoton', cursive;
+font-family: 'Stalinist One', cursive;
+font-family: 'Syncopate', sans-serif;
+font-family: 'Trade Winds', cursive;
+font-family: 'Vast Shadow', cursive;
+font-family: 'Wallpoet', cursive;*/
+
+
+
 body {
-	border: 5px solid green;
+	border: 5px solid gray;
+
+}
+
+#container{
+	background-color: black;
+	background-image: url("https://cdn-images-1.medium.com/max/1600/1*jyQsEU2T01tacQiKFKLh7Q.png");
+	/*background-size: 100% 100%;*/
+}
+#title{
+	text-align: center;
 }
 
 .alien-square{
 	display: inline-block;
-	height: 60px;
-	width: 23%;
-	border: 1px solid black;
+	height: 95px;
+	width: 24%;
+	border: 2px solid rgba(41, 249, 214, 0.97);
+	margin: 2px;
+	vertical-align: top;
+	text-align: center;
 }
 
 .barrier{
-	height: 60px;
+	height: 110px;
 	width: auto;
-	background-color: green;
+	background-color: black;
+	text-align: center;
+	border: 5px solid rgba(250, 243, 30, 0.25);
 }
 
 .human-square{
 	display: inline-block;
-	height: 60px;
-	width: 23%;
-	border: 1px solid black;
-
+	height: 95px;
+	width: 24%;
+	border: 2px solid rgba(255, 0, 220, 0.50);
+	margin: 2px;
+	vertical-align: top;
+	text-align: center;
 }
 
-.alien-gameboard, .human-gameboard{
-	width: 95%;
-	border: 2px solid black;
+#alien-gameboard{
+	margin: auto;
+	width:100%;
+} 
+
+
+#human-gameboard{
+	margin: auto;
+	width:100%;
 }
 
 .game-row{
-	width: 92%;
+	width: 100%;
 	height: 20%;
 }
 
@@ -38,43 +82,153 @@ body {
 }
 
 .gun-class{
-	background-color: pink
+	background-color: pink;
+}
+
+#alien-profile-pic{
+	background-image: url("https://i.pinimg.com/236x/9a/a5/c4/9aa5c4e194af43a35725752340d1babe--monster-design-cyberpunk.jpg");
+	width: 100px;
+	height: 100px;
+	margin: 0 auto;
+	display:inline-block;
+	background-size: 100% 100%
+
 }
 
 #human-profile-pic{
+	background-image: url("https://i.pinimg.com/736x/0f/d7/b3/0fd7b39ae6554d59fb4b24598fabcdea--overwatch-characters-fan-art-overwatch-fan-art.jpg");
 	width: 100px;
 	height: 100px;
-	background-image: url("https://i.pinimg.com/236x/0a/d0/12/0ad0126c132e9a658b97136c005d3fc3--black-women-art-black-art.jpg");
-	display: inline;
-	background-color: black;
-	border: 5px solid black;
+	margin: 0 auto;
+	display:inline-block;
+	background-size: 100% 100%
+}
+
+#alien-hud{
+	width: 95%;
+	height: 45%;
+	border: 2px solid rgba(41, 249, 214, 0.97);
+	margin: auto;
+	padding: 5px;
 }
 
 #human-hud{
 	width: 95%;
 	height: 45%;
-	border: 2px solid black;
+	border: 2px solid rgba(255, 0, 220, 0.35);
+	margin: auto;
+	padding: 5px;
 }
 
-button{
-	display: inline-block;
+#next-button{
+	margin: 0 auto;
+	font-family: 'Audiowide', cursive;
 }
 
-
-#human-hand-div{
-	border: 2px solid black;
-	width: 80%;
+#star{
+	margin: auto;
+	padding: 5px;
+	font-family: 'Gugi', cursive;
+	color: rgba(249, 41, 235, 0.97);
 	display: inline;
 }
 
-.human-card{
-	width: 70px;
-	height: 70px;
+#skirmish{
+	margin: auto;
+	padding: 5px;
+	font-family: 'Rock Salt', cursive;
+	color: rgba(41, 249, 214, 0.97);
+	display: inline;
+}
+
+#human-hand-div{
+	border: 2px solid black;
+	width: 70%;
+	display: inline-block;
+	background-color: rgba(255, 0, 220, 0.25);
+}
+
+
+#alien-hand-div{
+	border: 2px solid black;
+	width: 70%;
+	display: inline-block;
+	background-color: rgba(41, 249, 214, 0.25);
+}
+
+.human-card, .alien-card{
+	height: 90px;
 	border: 2px solid black;
 	display: inline-block;
 }
 
-#content{
-	background-color: red;
+.alien-side, .human-side{
+border: 5px solid gray;
 }
 
+.instructions-div{
+color: rgba(250, 243, 30, 1);
+text-align: center;
+margin: 5px auto 5px auto;
+}
+/*
+rgba(250, 140, 30, 0.15)*/
+
+#alien-vitals{
+background-color: rgba(41, 249, 214, 0.25);
+color: rgba(41, 249, 214, 1);
+margin: 0 auto;
+vertical-align: middle;
+}
+
+#human-vitals{
+background-color: rgba(255, 0, 220, 0.25);
+color: rgba(255, 0, 220, 1);
+margin: 0 auto;
+vertical-align: middle;
+}
+
+.vitals{
+margin:0 auto;
+display: inline-block;
+vertical-align: middle;
+padding-top: 13px	
+}
+
+.human-available {
+background-color: transparent;
+
+}
+
+div h2{
+padding-top: 6px;
+}
+
+#phase{
+	color: rgba(250, 243, 30, 1);
+}
+
+.card-property{
+	display: block;
+	vertical-align: bottom;
+	text-align: right;
+	position: relative;
+    top: 35px;
+}
+
+.card-integrity{
+	display: inline-block;
+	
+}
+
+.card-damage{
+	display: inline-block;
+} 
+
+.card-range{
+	display: inline-block;
+}
+
+.target{
+	background-color:red;
+}
