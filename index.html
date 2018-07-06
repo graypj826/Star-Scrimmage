@@ -19,41 +19,43 @@
 <body>
 	<div class = "container-fluid" id="container">
 		<div id="title"><h1 id="star"> STAR </h1> <h1 id="skirmish"> skirmish </h1>
-		</div>	
-		<div class="alien-side" class="row">	
-			<div id = "alien-hud" class="row">
-				<div id = "alien-hand-div" class="col-xs">
-				</div>
-				<div id="alien-profile-pic" clas="col-xs">
-				</div>
-			</div>
-			<div id ="alien-vitals" class="row">
-				<div class= "vitals" > <p id="alien-health"> health: <p> </div>
-				<div><h2> Player 2 </h2></div>
-				<div class = "vitals" > <p id="alien-holding-cards"> cards in hand: </p></div>
-			</div>
-			<div class="instructions-div" id="alien-instructions"> <p> instructions go here </p></div>
-			<div id="alien-gameboard" class = "gameboard">
-			</div>
-			
 		</div>
-		<div class = "barrier">			
-			<div id="phase"> <p> instructions go here </p></div>
-			<button type="button" id="next-button" class="btn btn-outline-warning"> Next Phase </button>
-		</div>
-		<div class="human-side" class="row">
-			<div id="human-gameboard" class = "gameboard">
+		<div id="hide-at-win">	
+			<div class="alien-side" class="row">	
+				<div id = "alien-hud" class="row">
+					<div id = "alien-hand-div" class="col-xs">
+					</div>
+					<div id="alien-profile-pic" clas="col-xs">
+					</div>
+				</div>
+				<div id ="alien-vitals" class="row">
+					<div class= "vitals" > <p id="alien-health"> health: </p> </div>
+					<div><h2> Player 2 </h2></div>
+					<div class = "vitals" > <p id="alien-holding-cards"> cards in hand: </p></div>
+				</div>
+				<div class="instructions-div" id="alien-instructions"> <p> instructions go here </p></div>
+				<div id="alien-gameboard" class = "gameboard">
+				</div>
+				
 			</div>
-			<div class="instructions-div" id="human-instructions"> <p> instructions go here </p></div>
-			<div id ="human-vitals" class="row">
-					<div class= "vitals" > <p id="human-health"> health: </p> </div>
-					<div><h2> Player 1 </h2></div>
-					<div class = "vitals" > <p id="human-holding-cards"> cards in hand: </p></div>
+			<div class = "barrier">			
+				<div id="phase"> <p> instructions go here </p></div>
+				<button type="button" id="next-button" class="btn btn-outline-warning"> Next Phase </button>
+			</div>
+			<div class="human-side" class="row">
+				<div id="human-gameboard" class = "gameboard">
 				</div>
-			<div id = "human-hud" class="row">
-				<div id="human-profile-pic" class="col-xs">
-				</div>
-				<div id = "human-hand-div" clas="col-xs">
+				<div class="instructions-div" id="human-instructions"> <p> instructions go here </p></div>
+				<div id ="human-vitals" class="row">
+						<div class= "vitals" > <p id="human-health"> health: </p> </div>
+						<div><h2> Player 1 </h2></div>
+						<div class = "vitals" > <p id="human-holding-cards"> cards in hand: </p></div>
+					</div>
+				<div id = "human-hud" class="row">
+					<div id="human-profile-pic" class="col-xs">
+					</div>
+					<div id = "human-hand-div" clas="col-xs">
+					</div>
 				</div>
 			</div>
 		</div>

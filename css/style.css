@@ -266,3 +266,19 @@ padding-top: 6px;
 	background-image: url("https://media.giphy.com/media/ahza0v6s5pSxy/200w.gif")
 	 
 }
+
+#player-1-win-screen{
+	margin: auto;
+	padding: 5px;
+	font-family: 'Gugi', cursive;
+	color: rgba(249, 41, 235, 0.97);
+	display: inline;
+}
+
+#player-2-win-screen{
+	margin: auto;
+	padding: 5px;
+	font-family: 'Rock Salt', cursive;
+	color: rgba(41, 249, 214, 0.97);
+	display: inline;
+}
