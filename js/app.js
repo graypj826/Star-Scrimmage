@@ -157,15 +157,13 @@ class Gun {
 	}
 	attackhull(target){
 		target.integrity = target.integrity-this.damage
-		console.log(target)
 	}
 	attackgun(target){
 		target.integrity = target.integrity-this.damage
-		console.log(target)
 	}
-	checkPartDestroyed(target, div){
-		if(target.integrity <= 0){
-			$(div).removeClass("gun-class");
+	checkPartDestroyed(name, target){
+		if(name.integrity <= 0){
+			target.hide();
 		}
 	}
 }
@@ -223,26 +221,22 @@ const human ={
 	},	
 	attack: function(){				
 		$(".human-gun-class").on("selectableselected",(function(e){
-			let shooter = $(e.target).find(".name-of-card").text()
-			console.log(shooter);
-			console.log("attack")
+			let shooter = $(e.target).data(("cardInfo"));
 			const rangeValue = human.determineRange(e);
 			human.humanTargeting(rangeValue);
 			human.humanAttackShot(e, shooter);		
 		}))
 	},
 	humanAttackShot : function(e, shooter){
-		console.log(shooter);
 		$(".target").one("click",function(e){
 			const target = $(e.currentTarget).children(".alien-card")
-			const name = $(e.currentTarget).find(".name-of-card").text()
-			console.log(name)
+			const name  = $(e.currentTarget).children(".alien-card").data(("cardInfo"))
 			if(target.hasClass("hull-class")){
-				shooter.attackhull(target)
-				checkAlienIntegrity(target);
+				shooter.attackhull(name)
+				checkAlienIntegrity(name);
 			} else if(target.hasClass("gun-class")){
 				shooter.attackgun(name)
-				game.checkPartDestroyed(shooter,name);
+				shooter.checkPartDestroyed(name,target);
 			} else {
 				console.log("miss");
 			}	
@@ -426,13 +420,13 @@ const game = {
 			this.addIntegrityToHumanCards(i);
 			this.addDamageToHumanCards(i);
 			this.addRangeToHumanCards(i);
-			this.addNameToHumanCards(i);
+			// this.addNameToHumanCards(i);
+			$(`#human-gun-${i}`).data("cardInfo", humangunPartsInHand[i])
 			gunDiv.draggable({
 				containment: '.human-side',
 				helper: 'clone',
 				start: function(event, ui){
 					$(".human-available").css("background-color", "green").css("opacity", "0.7")
-					console.log("draggable")
 				},
 				stop: function(event, ui) {
 					$(".human-available").css("background-color","transparent")
@@ -463,14 +457,14 @@ const game = {
 		const range = humangunPartsInHand[i].range;
 		rangeDiv.text(range)
 	},
-	addNameToHumanCards : function(i){
-		const nameDiv = $(`<div id="human-card-name-${i}" class="name-of-card human-name-of-card human-card-property"></div>`)
-		nameDiv.appendTo($(`#human-gun-${i}`).children(".card-property"))
-		const name = humangunPartsInHand[i].name;
-		nameDiv.text(name);
-		// nameDiv.css("opacity", "0");
-		//$(".human-name-of-card").hide();
-	},
+	// addNameToHumanCards : function(i){
+	// 	const nameDiv = $(`<div id="human-card-name-${i}" class="name-of-card human-name-of-card human-card-property"></div>`)
+	// 	nameDiv.appendTo($(`#human-gun-${i}`).children(".card-property"))
+	// 	const name = humangunPartsInHand[i].name;
+	// 	nameDiv.text(name);
+	// 	// nameDiv.css("opacity", "0");
+	// 	//$(".human-name-of-card").hide();
+	// },
 	dealAlien : function(){
 		for (let i =0; i < alienhullPartsInHand.length; i++){
 			const hullDiv = $(`<div id="alien-hull-${i}" class="alien-card hull-class alien-hull-class"> Hull Card <div class="card-property" id="alien-hull-card-text-${i}"> text </div></div>`)
@@ -489,7 +483,8 @@ const game = {
 			this.addIntegrityToAlienCards(i);
 			this.addDamageToAlienCards(i);
 			this.addRangeToAlienCards(i);
-			this.addNameToAlienCards(i);
+			// this.addNameToAlienCards(i);
+			$(`#alien-gun-${i}`).data("cardInfo", aliengunPartsInHand[i])
 			gunDiv.draggable({
 				containment: '.alien-side',
 				helper: 'clone',
@@ -525,13 +520,13 @@ const game = {
 		const range = aliengunPartsInHand[i].range;
 		rangeDiv.text(" "+range)
 	},
-	addNameToAlienCards : function(i){
-		const nameDiv = $(`<div id="alien-card-name-${i}" class="name-of-card"></div>`)
-		nameDiv.appendTo($(`#alien-gun-${i}`).children(".card-property"))
-		const name = aliengunPartsInHand[i].name;
-		nameDiv.text(name);
-		// nameDiv.hide();
-	},
+	// addNameToAlienCards : function(i){
+	// 	const nameDiv = $(`<div id="alien-card-name-${i}" class="name-of-card"></div>`)
+	// 	nameDiv.appendTo($(`#alien-gun-${i}`).children(".card-property"))
+	// 	const name = aliengunPartsInHand[i].name;
+	// 	nameDiv.text(name);
+	// 	// nameDiv.hide();
+	// },
 	//umbrella function to build the deck and deal cards
 	dealParts : function(){
 		this.buildDeck();
