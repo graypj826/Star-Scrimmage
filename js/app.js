@@ -64,6 +64,7 @@ for (let i = 0; i < gameBoard.length; i++){
 				}
 				if(ui.draggable.hasClass("gun-class")){
 					$(squareDiv).addClass("holds-gun")
+					$(squareDiv).addClass("human-gun-class")
 					const moveGun = humangunPartsInHand.splice(humangunPartsInHand[i]);
 					humangunPartsInPlay.push(moveGun);	
 				}
@@ -122,6 +123,7 @@ for (let i = 0; i < gameBoard.length; i++){
 				}
 				if(ui.draggable.hasClass("gun-class")){
 					$(squareDiv).addClass("holds-gun")
+					$(squareDiv).addClass("human-gun-class")
 					const moveGun = aliengunPartsInHand.splice(aliengunPartsInHand[i]);
 					aliengunPartsInPlay.push(moveGun);	
 				}
@@ -221,8 +223,8 @@ const human ={
 	},	
 	attack: function(){				
 		$(".human-gun-class").on("selectableselected",(function(e){
-			//let shooter = $(e.target).find(".name-of-card").text()
-			//console.log(shooter);
+			let shooter = $(e.target).find(".name-of-card").text()
+			console.log(shooter);
 			console.log("attack")
 			const rangeValue = human.determineRange(e);
 			human.humanTargeting(rangeValue);
@@ -230,21 +232,24 @@ const human ={
 		}))
 	},
 	humanAttackShot : function(e, shooter){
+		console.log(shooter);
 		$(".target").one("click",function(e){
 			const target = $(e.currentTarget).children(".alien-card")
+			const name = $(e.currentTarget).find(".name-of-card").text()
+			console.log(name)
 			if(target.hasClass("hull-class")){
 				shooter.attackhull(target)
 				checkAlienIntegrity(target);
 			} else if(target.hasClass("gun-class")){
-				shooter.attackgun(target)
-				game.checkPartDestroyed(shooter,target);
+				shooter.attackgun(name)
+				game.checkPartDestroyed(shooter,name);
 			} else {
 				console.log("miss");
 			}	
 		})	
 	},
 	determineRange : function(e){
-		const parent = $(e.currentTarget).parent()
+		const parent = $(e.target).parent(".human-square")
 		const id = parent.attr("id");
 		const rangeFinder = parent.find(".card-range")
 		const ycoord = parseInt(id[15]);
@@ -437,33 +442,34 @@ const game = {
 		this.checkDealHuman = true;		
 	},
 	addPropertiesToHumanCards : function(i){
-		const partsProperty = $("<div class='card-property'></div>")
+		const partsProperty = $("<div class='card-property human-card-property'></div>")
 		partsProperty.appendTo(`#human-gun-${i}`)
 	},
 	addIntegrityToHumanCards : function(i){
-		const integrityDiv = $(`<div id="human-integrity-text-${i}" class="card-integrity"></div>`)
+		const integrityDiv = $(`<div id="human-integrity-text-${i}" class="card-integrity human-card-property"></div>`)
 		integrityDiv.appendTo($(`#human-gun-${i}`).children(".card-property"))
 		const integrity = humangunPartsInHand[i].integrity;
 		integrityDiv.text(integrity + " / ")
 	},
 	addDamageToHumanCards : function(i){
-		const damageDiv = $(`<div id="human-gun-damage-text-${i}" class="card-damage"></div>`)
+		const damageDiv = $(`<div id="human-gun-damage-text-${i}" class="card-damage human-card-property"></div>`)
 		damageDiv.appendTo($(`#human-gun-${i}`).children(".card-property"))
 		const damage = humangunPartsInHand[i].damage;
 		damageDiv.text(damage + " / ")
 	},
 	addRangeToHumanCards : function(i){
-		const rangeDiv = $(`<div id="human-gun-range-text-${i}" class="card-range"></div>`)
+		const rangeDiv = $(`<div id="human-gun-range-text-${i}" class="card-range human-card-property"></div>`)
 		rangeDiv.appendTo($(`#human-gun-${i}`).children(".card-property"))
 		const range = humangunPartsInHand[i].range;
 		rangeDiv.text(range)
 	},
 	addNameToHumanCards : function(i){
-		const nameDiv = $(`<div id="human-card-name-${i}" class="name-of-card"></div>`)
+		const nameDiv = $(`<div id="human-card-name-${i}" class="name-of-card human-name-of-card human-card-property"></div>`)
 		nameDiv.appendTo($(`#human-gun-${i}`).children(".card-property"))
 		const name = humangunPartsInHand[i].name;
 		nameDiv.text(name);
-		nameDiv.hide();
+		// nameDiv.css("opacity", "0");
+		//$(".human-name-of-card").hide();
 	},
 	dealAlien : function(){
 		for (let i =0; i < alienhullPartsInHand.length; i++){
@@ -524,7 +530,7 @@ const game = {
 		nameDiv.appendTo($(`#alien-gun-${i}`).children(".card-property"))
 		const name = aliengunPartsInHand[i].name;
 		nameDiv.text(name);
-		nameDiv.hide();
+		// nameDiv.hide();
 	},
 	//umbrella function to build the deck and deal cards
 	dealParts : function(){
@@ -616,6 +622,8 @@ const game = {
 		})	
 	},
 	humanAttackRound : function(){
+		$(".human-card").draggable({disabled: true });
+
 		game.hideAlien();
 		game.turnOffAliens();
 		game.showHuman();
@@ -624,15 +632,24 @@ const game = {
 		human.getVitals();
 		human.attack();
 		
+	
+		
+		$(".human-name-of-card").show();
+
 		$(function(){
-			$(".human-gun-class").selectable();
+			$(".human-card").selectable();
+
+			
 		})
+
+
+		$()
 		
 		$('#human-instructions').text("Remember, you get one shot for each gun you have in play! When you're happy with your choice, click the button to end your turn.")
 
 		$('#phase').text("Player 1 - Attack")
 		
-		$(".human-card").draggable({disabled: true });
+		
 	},
 	//umbrella function to play a round
 	playHumanRounds : function(){
@@ -815,13 +832,10 @@ const game = {
 
 const alienAttackShot = function(){
 	$(".human-square").one("click",function(e){
-		console.log("human-square");
 		if($(e.currentTarget).hasClass("hull-class")){
-			console.log("classy")
 			alienGun.attackhull(alienHull)
 			checkIntegrity();
 		} else if($(e.currentTarget).hasClass("gun-class")){
-			console.log('shooter')
 			alienGun.attackgun(alienGun)
 			alienGun.checkPartDestroyed(humanGun,e.currentTarget);
 		}		
@@ -830,7 +844,6 @@ const alienAttackShot = function(){
 
 const checkAlienIntegrity = function(){
 	if (alien.life <= 0 ){
-		console.log("human 1 has won!")
 		gameWinner = true;
 	} else {
 		console.log("not destroyed")
