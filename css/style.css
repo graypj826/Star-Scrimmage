@@ -77,10 +77,6 @@ body {
 	height: 20%;
 }
 
-.hull-class{
-	background-color: red;
-}
-
 .gun-class{
 	background-color: pink;
 }
@@ -214,6 +210,7 @@ padding-top: 6px;
 	text-align: right;
 	position: relative;
     top: 35px;
+    background-color: rgb(60, 54, 52, 0.55);
 }
 
 .card-integrity{
@@ -230,5 +227,42 @@ padding-top: 6px;
 }
 
 .target{
-	background-color:red;
+	background-color:rgba(252, 34, 22, 0.62);
+}
+
+.alien-hull-class{
+	background-image: url("http://1.bp.blogspot.com/-R2zq5QEh9ks/UdHA9IXwCrI/AAAAAAAAAsY/cl3R-FIlpl0/s302/orangeship2.png");
+	background-size: 100% 100%;
+	background-color: rgba(41, 249, 214, 0.15);
+	color: rgba(250, 243, 30, 1);
+}
+
+.human-hull-class{
+	background-image: url("https://i.pinimg.com/originals/ab/b2/93/abb2936e042401822acb5cd44bfc385c.png");
+	background-size: 100% 100%;
+	background-color:rgba(255, 0, 220, 0.15);
+	color:rgba(250, 243, 30, 1);
+
+}
+
+.alien-gun-class{
+	background-image: url("http://www.pngmart.com/files/3/Spaceship-PNG-Photos.png");
+	background-size: 100% 100%;
+	background-color: rgba(41, 249, 214, 0.15);
+	color: rgba(250, 243, 30, 1);
+}
+
+.human-gun-class{
+	background-image: url("https://i.pinimg.com/originals/ae/6b/ab/ae6bab692b86843e9ccf3f9093e42866.png");
+	background-size: 100% 100%;
+	background-color:rgba(255, 0, 220, 0.15);
+	color: rgba(250, 243, 30, 1);
+	opacity: 1;
+}
+
+.destroyed{
+	/*background-image: url("https://img00.deviantart.net/b15f/i/2012/174/7/f/misc_fie_explosion_element_png_by_dbszabo1-d54jc6g.png")
+	background-image: url("https://i.pinimg.com/originals/6e/57/b3/6e57b347aa53106a515b8868936b23ba.png")*/
+	background-image: url("https://media.giphy.com/media/ahza0v6s5pSxy/200w.gif")
+	 
 }
