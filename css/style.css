@@ -272,7 +272,7 @@ padding-top: 6px;
 	padding: 5px;
 	font-family: 'Gugi', cursive;
 	color: rgba(249, 41, 235, 0.97);
-	display: inline;
+	display: block;
 }
 
 #player-2-win-screen{
@@ -280,5 +280,5 @@ padding-top: 6px;
 	padding: 5px;
 	font-family: 'Rock Salt', cursive;
 	color: rgba(41, 249, 214, 0.97);
-	display: inline;
+	display: block;
 }

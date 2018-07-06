@@ -126,7 +126,7 @@ for (let i = 0; i < gameBoard.length; i++){
 				}
 				if(ui.draggable.hasClass("gun-class")){
 					$(squareDiv).addClass("holds-gun")
-					$(squareDiv).addClass("human-gun-class")
+					$(squareDiv).addClass("alien-gun-class")
 					const moveGun = aliengunPartsInHand.splice(ui.draggable,1);
 					console.log(aliengunPartsInHand);
 					aliengunPartsInPlay.push(moveGun[0]);
@@ -170,10 +170,20 @@ class Gun {
 	attackgun(target){
 		target.integrity = target.integrity-this.damage
 	}
-	checkPartDestroyed(name, target){
+	checkAlienPartDestroyed(name, target){
 		if(name.integrity <= 0){
 			console.log(target)
 			$(target).parent(".alien-square").css("background-image","none")
+			$(target).css("background-image", "url('https://media.giphy.com/media/ahza0v6s5pSxy/200w.gif')");
+			$(target).fadeOut(600)			
+		} else {
+			$(target).children("card-integrity").text(target.integrity)
+		}
+	}
+	checkHumanPartDestroyed(name, target){
+		if(name.integrity <= 0){
+			console.log(target)
+			$(target).parent(".human-square").css("background-image","none")
 			$(target).css("background-image", "url('https://media.giphy.com/media/ahza0v6s5pSxy/200w.gif')");
 			$(target).fadeOut(600)			
 		} else {
@@ -189,7 +199,7 @@ Gun.counter = 0;
 
 //generate 2 guns and one hull for both
 
-const alienHull = new Hull("alienHull","alien", 10);
+const alienHull = new Hull("alienHull","alien", 1);
 const alienGun1 = new Gun("alienGun1","alien", 1, 1, 2);
 const alienGun2 = new Gun("alienGun2","alien", 1, 1, 3);
 const alienGun3 = new Gun("alienGun2", "alien", 2, 1, 1);
@@ -253,7 +263,7 @@ const human ={
 				human.turnOffTargeting();
 			} else if(target.hasClass("gun-class")){
 				shooter.attackgun(name)
-				shooter.checkPartDestroyed(name,target);
+				shooter.checkAlienPartDestroyed(name,target);
 				human.turnOffTargeting();
 			} else {
 				console.log("miss");
@@ -264,14 +274,15 @@ const human ={
 	checkAlienIntegrity: function (target, ){
 		if(target.integrity <= 0){
 			$("#hide-at-win").hide()
-			$("body").append("<div id = id = 'player-1-win-screen'> PLAYER 1 IS THE WINNER! </div>")
+			$("body").css("background-image", "url('https://cdn-images-1.medium.com/max/1600/1*jyQsEU2T01tacQiKFKLh7Q.png')")
+			$("body").append("<div id = 'player-1-win-screen'> <h1> PLAYER 1 IS THE WINNER! </h1></div>")
 			$("#player-1-win-screen").append("<input type='button' value='Refresh Page' onClick='window.location.reload()'>")
 		} else {
 			alien.getVitals()
 		}
 	},
 	determineRange : function(e){
-		const parent = $(e.target).parent(".human-square")
+		const parent = $(e.target).parent(".alien-square")
 		const id = parent.attr("id");
 		const rangeFinder = parent.find(".card-range")
 		const ycoord = parseInt(id[15]);
@@ -382,34 +393,47 @@ const alien = {
 	addToShip: function(){ 
 		$(".alien-gun-class").draggable({disabled: false });
 	},	
-	attack: function(){				
+	attack: function(){
+		// $(".human-card").selectable({
+		// 	disabled: true
+		// })
+		$(".alien-card").selectable({
+			disabled: false
+		})
+
+		$(".alien-card").removeClass("target")
+
 		$(".alien-gun-class").on("selectableselected",(function(e){
 			let shooter = $(e.target).data(("cardInfo"));
 			const rangeValue = alien.determineRange(e);
-			alien.Targeting(rangeValue);
+			alien.alienTargeting(rangeValue);
 			alien.alienAttackShot(e, shooter);		
 		}))
 	},
 	alienAttackShot : function(e, shooter){
+
 		$(".target").one("click",function(e){
 			const target = $(e.currentTarget).children(".human-card")
 			const name  = $(e.currentTarget).children(".human-card").data(("cardInfo"))
 			if(target.hasClass("hull-class")){
 				shooter.attackhull(name);
-				game.checkHumanIntegrity(name);
+				alien.checkHumanIntegrity(name);
+				alien.turnOffTargeting();
 			} else if(target.hasClass("gun-class")){
 				shooter.attackgun(name)
-				shooter.checkPartDestroyed(name,target);
+				shooter.checkHumanPartDestroyed(name,target);
+				alien.turnOffTargeting();
 			} else {
 				console.log("miss");
 			}	
 		})	
 	},
-	checkHumanIntegrity: function (name){
-		if(name.integrity <= 0){
+	checkHumanIntegrity: function (target){
+		if(target.integrity <= 0){
 			$("#hide-at-win").hide()
-			$("body").append("<div id = id = 'player-2-win-screen'> PLAYER 2 IS THE WINNER! </div>")
-			$("#player-2-win-screen").append("<input type='button' value='Refresh Page' onClick='window.location.reload()'>")
+			$("body").css("background-image", "url('https://cdn-images-1.medium.com/max/1600/1*jyQsEU2T01tacQiKFKLh7Q.png')")
+			$("body").append("<div id = 'player-2-win-screen'> <h1> PLAYER 2 IS THE WINNER! </h1></div>")
+			$("#player-1-win-screen").append("<input type='button' value='Refresh Page' onClick='window.location.reload()'>")
 		} else {
 			$(target).children("card-integrity").text(target.integrity)
 			human.getVitals()
@@ -429,64 +453,144 @@ const alien = {
 		// const rangeFinder = parent.find(".card-range")
 		// const rangeValue = rangeFinder.text() - 1;
 		if (rangeValue === 3){
+
 			$(`#human-square-0-3`).addClass("target")
+			$(`#human-square-0-3`).children().addClass("target")
 			$(`#human-square-1-3`).addClass("target")
+			$(`#human-square-1-3`).children().addClass("target")
 			$(`#human-square-2-3`).addClass("target")
+			$(`#human-square-2-3`).children().addClass("target")
 			$(`#human-square-3-3`).addClass("target")
+			$(`#human-square-3-3`).children().addClass("target")
 
 			$(`#human-square-0-2`).addClass("target")
+			$(`#human-square-0-2`).children().addClass("target")
 			$(`#human-square-1-2`).addClass("target")
+			$(`#human-square-1-2`).children().addClass("target")
 			$(`#human-square-2-2`).addClass("target")
+			$(`#human-square-2-2`).children().addClass("target")
 			$(`#human-square-3-2`).addClass("target")
+			$(`#human-square-3-2`).children().addClass("target")
 
 			$(`#human-square-0-1`).addClass("target")
+			$(`#human-square-0-1`).children().addClass("target")
 			$(`#human-square-1-1`).addClass("target")
+			$(`#human-square-1-1`).children().addClass("target")
 			$(`#human-square-2-1`).addClass("target")
+			$(`#human-square-2-1`).children().addClass("target")
 			$(`#human-square-3-1`).addClass("target")
+			$(`#human-square-3-1`).children().addClass("target")
 
 			$(`#human-square-0-0`).addClass("target")
+			$(`#human-square-0-0`).children().addClass("target")
 			$(`#human-square-1-0`).addClass("target")
+			$(`#human-square-1-0`).children().addClass("target")
 			$(`#human-square-2-0`).addClass("target")
+			$(`#human-square-2-0`).children().addClass("target")
 			$(`#human-square-3-0`).addClass("target")
+			$(`#human-square-3-0`).children().addClass("target")
 
 		} else if (rangeValue === 2){
 
-			$(`#human-square-0-3`).addClass("target")
-			$(`#human-square-1-3`).addClass("target")
-			$(`#human-square-2-3`).addClass("target")
-			$(`#human-square-3-3`).addClass("target")
-
 			$(`#human-square-0-2`).addClass("target")
+			$(`#human-square-0-2`).children().addClass("target")
 			$(`#human-square-1-2`).addClass("target")
+			$(`#human-square-1-2`).children().addClass("target")
 			$(`#human-square-2-2`).addClass("target")
+			$(`#human-square-2-2`).children().addClass("target")
 			$(`#human-square-3-2`).addClass("target")
+			$(`#human-square-3-2`).children().addClass("target")
 
 			$(`#human-square-0-1`).addClass("target")
+			$(`#human-square-0-1`).children().addClass("target")
 			$(`#human-square-1-1`).addClass("target")
+			$(`#human-square-1-1`).children().addClass("target")
 			$(`#human-square-2-1`).addClass("target")
+			$(`#human-square-2-1`).children().addClass("target")
 			$(`#human-square-3-1`).addClass("target")
+			$(`#human-square-3-1`).children().addClass("target")
+
+			$(`#human-square-0-0`).addClass("target")
+			$(`#human-square-0-0`).children().addClass("target")
+			$(`#human-square-1-0`).addClass("target")
+			$(`#human-square-1-0`).children().addClass("target")
+			$(`#human-square-2-0`).addClass("target")
+			$(`#human-square-2-0`).children().addClass("target")
+			$(`#human-square-3-0`).addClass("target")
+			$(`#human-square-3-0`).children().addClass("target")
 
 		} else if (rangeValue === 1){
 
-			$(`#human-square-0-3`).addClass("target")
-			$(`#human-square-1-3`).addClass("target")
-			$(`#human-square-2-3`).addClass("target")
-			$(`#human-square-3-3`).addClass("target")
+			$(`#human-square-0-1`).addClass("target")
+			$(`#human-square-0-1`).children().addClass("target")
+			$(`#human-square-1-1`).addClass("target")
+			$(`#human-square-1-1`).children().addClass("target")
+			$(`#human-square-2-1`).addClass("target")
+			$(`#human-square-2-1`).children().addClass("target")
+			$(`#human-square-3-1`).addClass("target")
+			$(`#human-square-3-1`).children().addClass("target")
 
-			$(`#human-square-0-2`).addClass("target")
-			$(`#human-square-1-2`).addClass("target")
-			$(`#human-square-2-2`).addClass("target")
-			$(`#human-square-3-2`).addClass("target")
+			$(`#human-square-0-0`).addClass("target")
+			$(`#human-square-0-0`).children().addClass("target")
+			$(`#human-square-1-0`).addClass("target")
+			$(`#human-square-1-0`).children().addClass("target")
+			$(`#human-square-2-0`).addClass("target")
+			$(`#human-square-2-0`).children().addClass("target")
+			$(`#human-square-3-0`).addClass("target")
+			$(`#human-square-3-0`).children().addClass("target")
+
 
 		} else {
-
-			$(`#human-square-0-3`).addClass("target")
-			$(`#human-square-1-3`).addClass("target")
-			$(`#human-square-2-3`).addClass("target")
-			$(`#human-square-3-3`).addClass("target")
+			$(`#human-square-0-0`).addClass("target")
+			$(`#human-square-0-0`).children().addClass("target")
+			$(`#human-square-1-0`).addClass("target")
+			$(`#human-square-1-0`).children().addClass("target")
+			$(`#human-square-2-0`).addClass("target")
+			$(`#human-square-2-0`).children().addClass("target")
+			$(`#human-square-3-0`).addClass("target")
+			$(`#human-square-3-0`).children().addClass("target")
 
 		}
 	},
+	turnOffTargeting: function(){
+		game.turnOffAliens();
+		
+		$(`#human-square-0-3`).removeClass("target")
+		$(`#human-square-0-3`).children().removeClass("target")
+		$(`#human-square-1-3`).removeClass("target")
+		$(`#human-square-1-3`).children().removeClass("target")
+		$(`#human-square-2-3`).removeClass("target")
+		$(`#human-square-2-3`).children().removeClass("target")
+		$(`#human-square-3-3`).removeClass("target")
+		$(`#human-square-3-3`).children().removeClass("target")
+
+		$(`#human-square-0-2`).removeClass("target")
+		$(`#human-square-0-2`).children().removeClass("target")
+		$(`#human-square-1-2`).removeClass("target")
+		$(`#human-square-1-2`).children().removeClass("target")
+		$(`#human-square-2-2`).removeClass("target")
+		$(`#human-square-2-2`).children().removeClass("target")
+		$(`#human-square-3-2`).removeClass("target")
+		$(`#human-square-3-2`).children().removeClass("target")
+
+		$(`#human-square-0-1`).removeClass("target")
+		$(`#human-square-0-1`).children().removeClass("target")
+		$(`#human-square-1-1`).removeClass("target")
+		$(`#human-square-1-1`).children().removeClass("target")
+		$(`#human-square-2-1`).removeClass("target")
+		$(`#human-square-2-1`).children().removeClass("target")
+		$(`#human-square-3-1`).removeClass("target")
+		$(`#human-square-3-1`).children().removeClass("target")
+
+		$(`#human-square-0-0`).removeClass("target")
+		$(`#human-square-0-0`).children().removeClass("target")
+		$(`#human-square-1-0`).removeClass("target")
+		$(`#human-square-1-0`).children().removeClass("target")
+		$(`#human-square-2-0`).removeClass("target")
+		$(`#human-square-2-0`).children().removeClass("target")
+		$(`#human-square-3-0`).removeClass("target")
+		$(`#human-square-3-0`).children().removeClass("target")
+		},
 	getVitals: function(){
 		$("#alien-health").text(`Health: ${alienHull.integrity}`);
 		$("#alien-holding-cards").text(`Cards In Hand: ${aliengunPartsInHand.length}`)
@@ -548,7 +652,7 @@ const game = {
 		for (let i =0; i < humanhullPartsInHand.length; i++){
 			const hullDiv = $(`<div id="human-hull-${i}" class="human-card hull-class human-hull-class"> Colony Ship  <div class="card-property" id="human-hull-card-text-${i}"> text </div></div>`)
 			hullDiv.appendTo ("#human-hand-div");
-			$(`#alien-hull-${i}`).data("cardInfo", alienhullPartsInHand[i])
+			$(`#human-hull-${i}`).data("cardInfo", humanhullPartsInHand[i])
 			const integrity = humanhullPartsInHand[i].integrity
 			$(`#human-hull-card-text-${i}`).text(integrity);
 			hullDiv.draggable({
@@ -672,8 +776,8 @@ const game = {
 
 		human.playHull();
 
-		$('#human-instructions').text("Remember, your ship parts can only be built onto your ship, so place wisely! When you're happy with your choice, click the button to end your turn.")
-		$('#phase').text("Player 1 - Place Your First Hull Card")
+		$('#human-instructions').text("Remember, your fighters can only be deployed by your colony ship, so deploy wisely! When you're happy with your choice, click the button to end your turn.")
+		$('#phase').text("Player 1 - Deploy Your Colony Ship")
 		
 
 		
@@ -693,8 +797,8 @@ const game = {
 	
 		human.addToShip();
 
-		$('#human-instructions').text("Remember, your Parts cards can only be built onto your ship, so place wisely! When you're happy with your choice, click the button to end your turn.")
-		$('#phase').text("Player 1 - Place Your First Part Cards")
+		$('#human-instructions').text("Remember, your fighters can only be deployed by your colony ship, so deploy wisely! When you're happy with your choice, click the button to end your turn.")
+		$('#phase').text("Player 1 - Deploy Your Fighter Ship")
 		
 		this.checkConstructFirstHumanParts = true;
 	},
@@ -705,16 +809,16 @@ const game = {
 		
 		human.playHull();
 
-		$('#human-instructions').text("Remember, your Parts cards can only be built onto your ship, so place wisely! When you're happy with your choice, click the button to end your turn.")
-		$('#phase').text("Player 1 - Modify Your Hull")
+		$('#human-instructions').text("Remember, your fighters can only be deployed by your colony ship, so deploy wisely! When you're happy with your choice, click the button to end your turn.")
+		$('#phase').text("Player 1 - Deploy Additional Colony Ships")
 		
 		if (humangunPartsInHand.length > 0){
-			$('#next-button').text("Next: Add to Your Ship"),
+			$('#next-button').text("Next: Add To Your Fleet"),
 			$('#next-button').one("click",function(){
 				game.constructHumanPartsRound();
 			})
 		} else {
-			$('#next-button').text("Attack!")
+			$('#next-button').text("Move to Attack")
 			$('#next-button').one("click", function(){
 				game.humanAttackRound();
 			})
@@ -734,10 +838,10 @@ const game = {
 
 		$(".human-hull-class").draggable({disabled: true });
 		
-		$('#human-instructions').text("Remember, your Parts cards can only be built onto your ship, so place wisely! When you're happy with your choice, click the button to end your turn.")
-		$('#phase').text("Player 1 - Add To Your Ship")
+		$('#human-instructions').text("Remember, your fighters can only be deployed by your colony ship, so deploy wisely! When you're happy with your choice, click the button to end your turn.")
+		$('#phase').text("Player 1 - Deploy Additional Fighter Ships")
 		
-		$('#next-button').text("Attack!")
+		$('#next-button').text("Move to Attack")
 		$('#next-button').one("click", function(){
 			$('#construction').hide();
 			game.humanAttackRound();
@@ -760,9 +864,9 @@ const game = {
 		$(function(){
 			$(".human-card").selectable();			
 		})	
-		$('#human-instructions').text("Remember, you get one shot for each gun you have in play! When you're happy with your choice, click the button to end your turn.")
+		$('#human-instructions').text("You get one shot for each ship you have in play! When you're happy with your choice, click the button to end your turn.")
 
-		$('#phase').text("Player 1 - Attack")
+		$('#phase').text("Player 1 - Attack!")
 		
 		
 	},
@@ -780,8 +884,8 @@ const game = {
 		
 		alien.playHull();
 
-		$('#alien-instructions').text("Remember, your ship parts can only be built onto your ship, so place wisely! When you're happy with your choice, click the button to end your turn.")
-		$('#phase').text("Player 2 - Place Your First Hull Card")
+		$('#alien-instructions').text("Remember, your fighters can only be deployed by your colony ship, so deploy wisely! When you're happy with your choice, click the button to end your turn.")
+		$('#phase').text("Player 2 - Place Your Colony Ship")
 		$("#alien-health").text(`Health: ${alienHull.integrity}`);
 		$("#alien-holding-cards").text(`Cards In Hand: ${aliengunPartsInHand.length}`)
 
@@ -796,8 +900,8 @@ const game = {
 
 		alien.addToShip();
 		
-		$('#alien-instructions').text("Remember, your Parts cards can only be built onto your ship, so place wisely! When you're happy with your choice, click the button to end your turn.")
-		$('#phase').text("Player 2 - Place Your First Part Cards")
+		$('#alien-instructions').text("Remember, your fighters can only be deployed by your colony ship, so deploy wisely! When you're happy with your choice, click the button to end your turn.")
+		$('#phase').text("Player 2 - Place Your Fighter Ships")
 
 		this.checkConstructFirstAlienParts = true;
 	},
@@ -808,13 +912,13 @@ const game = {
 		alien.playHull();
 
 		if (aliengunPartsInHand.length > 0){
-			$('#next-button').text("Next: Add to Your Ship"),
+			$('#next-button').text("Next: Add To Your Fleet"),
 			$('#next-button').click(function(){
 				game.constructAlienPartsRound();
 				console.log("construct parts is next")
 			})
 		} else {
-			$('#next-button').text("Attack!")
+			$('#next-button').text("Move To Attack!")
 			$('#next-button').click(function(){
 				game.alienAttackRound();
 				console.log("attack is next")
@@ -822,14 +926,14 @@ const game = {
 		}
 		
 		
-		$('#alien-instructions').text("Remember, your Parts cards can only be built onto your ship, so place wisely! When you're happy with your choice, click the button to end your turn.")
-		$('#phase').text("Player 2 - Modify Your Hull")
+		$('#alien-instructions').text("Remember, your fighters can only be deployed by your colony ship, so deploy wisely! When you're happy with your choice, click the button to end your turn.")
+		$('#phase').text("Player 2 - Deploy Any Additional Colony Ships")
 		console.log(aliengunPartsInHand)
 			
 	},	
 	constructAlienPartsRound : function(){		
 		$(".alien-hull-class").draggable({disabled: true });
-		$('#next-button').text("Attack!")
+		$('#next-button').text("Move To Attack")
 		$('#next-button').click(function(){
 			$('#construction').hide();
 			game.alienAttackRound();
@@ -837,8 +941,8 @@ const game = {
 		console.log("attack phase")
 		game.hideHuman();
 		game.showAlien();
-		$('#alien-instructions').text("Remember, your Parts cards can only be built onto your ship, so place wisely! When you're happy with your choice, click the button to end your turn.")
-		$('#phase').text("Player 2 - Add To Your Ship")
+		$('#alien-instructions').text("Remember, your fighters can only be deployed by your colony ship, so deploy wisely! When you're happy with your choice, click the button to end your turn.")
+		$('#phase').text("Player 2 - Deploy Any Additional Fighter Ships")
 
 		alien.addToShip();
 	},
@@ -846,10 +950,15 @@ const game = {
 	alienAttackRound : function(){
 		game.hideHuman();
 		game.showAlien();
-
+		game.turnOffHumans();
 		game.switchButton();
-		$('#alien-instructions').text("Remember, you get one shot for each gun you have in play! When you're happy with your choice, click the button to end your turn.")
-		$('#phase').text("Player 2 - Attack")
+
+		alien.attack();
+
+		$('#alien-instructions').text("You get one shot for each ship you have in play! When you're happy with your choice, click the button to end your turn.")
+
+			//^^^currently un-true
+		$('#phase').text("Player 2 - Attack!")
 		$(".alien-card").draggable({disabled: true });
 
 	},
