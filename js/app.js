@@ -158,6 +158,7 @@ class Gun {
 	//this.hull = Math.floor(Math.random() * 4) + 3;
 	//Math.floor(Math.random() * 4) + 3;
 	attackhull(target){
+		console.log(target)
 		target.integrity = target.integrity-this.damage
 	}
 	attackgun(target){
@@ -223,6 +224,7 @@ gameWinner = false;
 
 const human ={
 	life :  humanHull.integrity,
+
 	playHull: function(){
 		$(".human-hull-class").draggable({disabled: false });
 	},
@@ -230,7 +232,7 @@ const human ={
 		$(".human-gun-class").draggable({disabled: false });
 	},	
 	attack: function(){				
-		$(".human-gun-class").on("selectableselected",(function(e){
+		$(".human-gun-class").one("selectableselected",(function(e){
 			let shooter = $(e.target).data(("cardInfo"));
 			const rangeValue = human.determineRange(e);
 			human.humanTargeting(rangeValue);
@@ -243,7 +245,7 @@ const human ={
 			const name  = $(e.currentTarget).children(".alien-card").data(("cardInfo"))
 			if(target.hasClass("hull-class")){
 				shooter.attackhull(name)
-				this.checkAlienIntegrity(name);
+				human.checkAlienIntegrity(name);
 				this.turnOffTargeting();
 			} else if(target.hasClass("gun-class")){
 				shooter.attackgun(name)
@@ -341,9 +343,11 @@ const human ={
 		$("#human-holding-cards").text(`Cards In Hand: ${humangunPartsInHand.length}`)
 	},
 	turnOffTargeting: function(){
-		for (let i = 0, i <4, i++){
-			for(let x =0, x <4, i++){
-				console.log(i "+" x)
+		game.turnOffAliens();
+		for (let i = 0; i <4; i++){
+			for(let x =0; x <4; i++){
+				console.log( i );
+				console.log( x );
 			}
 		}	
 	}
@@ -517,6 +521,7 @@ const game = {
 		for (let i =0; i < humanhullPartsInHand.length; i++){
 			const hullDiv = $(`<div id="human-hull-${i}" class="human-card hull-class human-hull-class"> Hull Card  <div class="card-property" id="human-hull-card-text-${i}"> text </div></div>`)
 			hullDiv.appendTo ("#human-hand-div");
+			$(`#alien-hull-${i}`).data("cardInfo", alienhullPartsInHand[i])
 			const integrity = humanhullPartsInHand[i].integrity
 			$(`#human-hull-card-text-${i}`).text(integrity);
 			hullDiv.draggable({
@@ -573,6 +578,7 @@ const game = {
 		for (let i =0; i < alienhullPartsInHand.length; i++){
 			const hullDiv = $(`<div id="alien-hull-${i}" class="alien-card hull-class alien-hull-class"> Hull Card <div class="card-property" id="alien-hull-card-text-${i}"> text </div></div>`)
 			hullDiv.appendTo("#alien-hand-div");
+			$(`#alien-hull-${i}`).data("cardInfo", alienhullPartsInHand[i])
 			const integrity = alienhullPartsInHand[i].integrity
 			$(`#alien-hull-card-text-${i}`).text(integrity);
 			hullDiv.draggable({
@@ -774,21 +780,27 @@ const game = {
 		this.checkConstructFirstAlienParts = true;
 	},
 	constructAlienHullRound : function(){
+		game.showAlien();
+		game.hideHuman();
+
 		if (aliengunPartsInHand.length > 0){
 			$('#next-button').text("Next: Add to Your Ship"),
 			$('#next-button').click(function(){
 				game.constructAlienPartsRound();
+				console.log("construct parts is next")
 			})
 		} else {
 			$('#next-button').text("Attack!")
 			$('#next-button').click(function(){
 				game.alienAttackRound();
+				console.log("attack is next")
 			})
 		}
-		game.hideHuman();
-		game.showAlien();
+		
+		
 		$('#alien-instructions').text("Remember, your Parts cards can only be built onto your ship, so place wisely! When you're happy with your choice, click the button to end your turn.")
 		$('#phase').text("Player 2 - Modify Your Hull")
+		console.log(aliengunPartsInHand)
 		alien.getVitals()
 		alien.playHull();	
 	},	
@@ -799,6 +811,7 @@ const game = {
 			$('#construction').hide();
 			game.alienAttackRound();
 		})
+		console.log("attack phase")
 		game.hideHuman();
 		game.showAlien();
 		$('#alien-instructions').text("Remember, your Parts cards can only be built onto your ship, so place wisely! When you're happy with your choice, click the button to end your turn.")
@@ -827,14 +840,6 @@ const game = {
 	resetFunctions : function(){
 		game.playHumanRounds = false;
 		game.playAlienRounds = false;
-		for(let i = 0; i <humanShotThisRound.length; i++){
-			const firedGuns = humanShotThisRound.splice(humanShotThisRound[0]);
-				humangunPartsInPlay.push(firedGuns);
-		}
-		for(let i = 0; i <alienShotThisRound.length; i++){
-			const firedGuns = alienShotThisRound.splice(alienShotThisRound[0]);
-				aliengunPartsInPlay.push(firedGuns);
-		}
 		game.switchPlayers();
 	},
 	switchButton: function(){
@@ -891,8 +896,16 @@ const game = {
 		$(".alien-card").draggable({
 			disabled: true
 		})
-		$(".alien-card").off("click")
-			 
+		$(".alien-card").off("click")		 
+	},
+	turnOffHumans : function(){
+		$(".human-card").selectable({
+			disabled: true
+		})
+		$(".human-card").draggable({
+			disabled: true
+		})
+		$(".human-card").off("click")		 
 	},
 
 
