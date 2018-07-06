@@ -62,14 +62,16 @@ body {
 }
 
 #alien-gameboard{
-	margin: auto;
+	margin: 0 auto;
 	width:100%;
+	text-align: center;
 } 
 
 
 #human-gameboard{
-	margin: auto;
+	margin: 0 auto;
 	width:100%;
+	text-align: center;
 }
 
 .game-row{
