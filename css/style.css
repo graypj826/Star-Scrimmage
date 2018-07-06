@@ -273,6 +273,7 @@ padding-top: 6px;
 	font-family: 'Gugi', cursive;
 	color: rgba(249, 41, 235, 0.97);
 	display: block;
+	text-align: center;
 }
 
 #player-2-win-screen{

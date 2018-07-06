@@ -254,7 +254,7 @@ const human ={
 		}))
 	},
 	humanAttackShot : function(e, shooter){
-		$(".target").one("click",function(e){
+		$(".target").unbind().click(function(e){
 			const target = $(e.currentTarget).children(".alien-card")
 			const name  = $(e.currentTarget).children(".alien-card").data(("cardInfo"))
 			if(target.hasClass("hull-class")){
@@ -271,7 +271,7 @@ const human ={
 			}	
 		})	
 	},
-	checkAlienIntegrity: function (target, ){
+	checkAlienIntegrity: function (target){
 		if(target.integrity <= 0){
 			$("#hide-at-win").hide()
 			$("body").css("background-image", "url('https://cdn-images-1.medium.com/max/1600/1*jyQsEU2T01tacQiKFKLh7Q.png')")
@@ -282,7 +282,7 @@ const human ={
 		}
 	},
 	determineRange : function(e){
-		const parent = $(e.target).parent(".alien-square")
+		const parent = $(e.target).parent(".human-square")
 		const id = parent.attr("id");
 		const rangeFinder = parent.find(".card-range")
 		const ycoord = parseInt(id[15]);
@@ -411,8 +411,7 @@ const alien = {
 		}))
 	},
 	alienAttackShot : function(e, shooter){
-
-		$(".target").one("click",function(e){
+		$(".target").unbind().click(function(e){
 			const target = $(e.currentTarget).children(".human-card")
 			const name  = $(e.currentTarget).children(".human-card").data(("cardInfo"))
 			if(target.hasClass("hull-class")){
